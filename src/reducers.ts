@@ -3,7 +3,7 @@ import { combineReducers } from 'redux'
 import { ADD_TODO } from './actions';
 
 interface stateProps {
-    todos: TodoInterface[];
+    listOfTodos: TodoInterface[];
     showCompleted: boolean;
 }
 
@@ -15,14 +15,14 @@ const initialTodos = [
 let todoId = 2;
 
 const initialState: stateProps = {
-    todos: initialTodos,
+    listOfTodos: initialTodos,
     showCompleted: true
 }
 
 export const todosReducer = (state = initialState, action) => {
     switch(action.type) {
         case ADD_TODO:
-            let todos = state.todos;
+            let todos = [...state.listOfTodos];
             
             todos.push({
                 content: action.content,
@@ -30,12 +30,12 @@ export const todosReducer = (state = initialState, action) => {
                 completed: false
             });
 
-            return {...state, todos}
+            return {...state, listOfTodos: todos}
         default:
             return state;
     }
 }
 
 export const rootReducer = combineReducers({
-    todos: todosReducer
+    todosReducer: todosReducer
 })

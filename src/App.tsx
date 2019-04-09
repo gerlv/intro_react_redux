@@ -62,6 +62,7 @@ class AddTodoComponent extends Component<AddTodoProps> {
 
 interface AppProps {
   todos: TodoInterface[];
+  addTodo: (content) => void;
 }
 
 class App extends Component<AppProps, StateInterface> {
@@ -76,6 +77,8 @@ class App extends Component<AppProps, StateInterface> {
 
   addTodo = (content, callback) => {
     const { todos } = this.state;
+
+    this.props.addTodo(content);
 
     todos.push({
       content,
@@ -108,11 +111,16 @@ class App extends Component<AppProps, StateInterface> {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const { todos } = state.todos;
+  const todos = state.todosReducer.listOfTodos;
 
   return {
-    todos
+    todos,
+    showCompleted: state.todosReducer.showCompleted
   }
 };
 
-export default connect(mapStateToProps)(App);
+const mapDispatchToProps = {
+  addTodo: addTodo
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
