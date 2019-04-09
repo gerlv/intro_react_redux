@@ -1,24 +1,21 @@
 import React, { Component } from 'react';
 import './App.css';
+import { TodoInterface } from './interfaces';
+import { connect } from 'react-redux';
+import { addTodo } from './actions';
 
 let todoId = 0;
 
-interface TodoInterface {
-  content: string;
-  todoId: number;
-  completed: boolean;
-}
-
 interface StateInterface {
   todos: TodoInterface[];
-  showHidden: boolean;
+  showCompleted: boolean;
 }
 
-const Toggle = ({ visible, toggle }) => {
+const Toggle = ({ showCompleted, toggle }) => {
   return (
     <div>
       <button onClick={toggle}>
-        {visible ?  `Hide` : `Show`} completed
+        {showCompleted ?  `Hide` : `Show`} completed
       </button>
     </div>
   );
@@ -63,13 +60,17 @@ class AddTodoComponent extends Component<AddTodoProps> {
   }
 }
 
-class App extends Component<{}, StateInterface> {
-  constructor(props: {}) {
+interface AppProps {
+  todos: TodoInterface[];
+}
+
+class App extends Component<AppProps, StateInterface> {
+  constructor(props: AppProps) {
     super(props);
 
     this.state = {
       todos: [],
-      showHidden: false
+      showCompleted: false
     }
   }
 
@@ -89,7 +90,7 @@ class App extends Component<{}, StateInterface> {
 
   toggleFilter = () => {
     this.setState({
-      showHidden: !this.state.showHidden
+      showCompleted: !this.state.showCompleted
     });
   }
 
@@ -97,13 +98,21 @@ class App extends Component<{}, StateInterface> {
     return (
       <div className="App">
         <div className="App-header">
-          <Toggle visible={this.state.showHidden} toggle={this.toggleFilter} />
+          <Toggle showCompleted={this.state.showCompleted} toggle={this.toggleFilter} />
           <AddTodoComponent addTodo={this.addTodo} />
-          <TodosList todos={this.state.todos} />
+          <TodosList todos={this.props.todos} />
         </div>
       </div>
     );
   }
 }
 
-export default App;
+const mapStateToProps = (state, ownProps) => {
+  const { todos } = state.todos;
+
+  return {
+    todos
+  }
+};
+
+export default connect(mapStateToProps)(App);
